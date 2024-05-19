@@ -1,15 +1,15 @@
 import 'dart:async';
-
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:pixel_adventure/components/background_tile.dart';
-import 'package:pixel_adventure/components/checkpoint.dart';
-import 'package:pixel_adventure/components/chicken.dart';
-import 'package:pixel_adventure/components/collision_block.dart';
-import 'package:pixel_adventure/components/fruit.dart';
-import 'package:pixel_adventure/components/player.dart';
-import 'package:pixel_adventure/components/saw.dart';
+import 'package:pixel_adventure/backgrounds/background_tile.dart';
+import 'package:pixel_adventure/collectables/checkpoint.dart';
+import 'package:pixel_adventure/characters/chicken.dart';
+import 'package:pixel_adventure/collectables/fruit.dart';
+import 'package:pixel_adventure/characters/player.dart';
+import 'package:pixel_adventure/obstacles/saw.dart';
+import 'package:pixel_adventure/main.dart';
 import 'package:pixel_adventure/pixel_adventure.dart';
+import 'package:pixel_adventure/utils/collision_block.dart';
 
 class Level extends World with HasGameRef<PixelAdventure> {
   final String levelName;
@@ -29,6 +29,11 @@ class Level extends World with HasGameRef<PixelAdventure> {
     _addCollisions();
 
     return super.onLoad();
+  }
+
+  @override
+  FutureOr<void> onMount() async {
+    game.overlays.add(pauseButton);
   }
 
   void _scrollingBackground() {
