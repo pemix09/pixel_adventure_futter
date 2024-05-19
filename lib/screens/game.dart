@@ -1,6 +1,8 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:pixel_adventure/characters/player.dart';
 import 'package:pixel_adventure/dialogs/game_pause_dialog.dart';
+import 'package:pixel_adventure/levels/level.dart';
 import 'package:pixel_adventure/main.dart';
 import 'package:pixel_adventure/games/pixel_adventure.dart';
 
@@ -10,7 +12,11 @@ class GameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GameWidget<PixelAdventure>(
-      game: PixelAdventure(),
+      game: PixelAdventure(
+        world: Level(
+          levelName: 'Level-01',
+        ),
+      ),
       overlayBuilderMap: {
         pauseButton: (context, game) {
           return Positioned(

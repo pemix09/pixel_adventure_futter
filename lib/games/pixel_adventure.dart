@@ -19,18 +19,20 @@ class PixelAdventure extends FlameGame
   late CameraComponent cam;
   Player player = Player(character: 'Mask Dude');
   late JoystickComponent joystick;
+  Level world;
   bool showControls = false;
   bool playSounds = true;
   double soundVolume = 1.0;
-  List<String> levelNames = ['Level-01', 'Level-01'];
   int currentLevelIndex = 0;
+
+  PixelAdventure({required this.world});
 
   @override
   FutureOr<void> onLoad() async {
     // Load all images into cache
     await images.loadAllImages();
-
-    _loadLevel();
+    _addWorld();
+    _addCamera();
 
     if (showControls) {
       addJoystick();
@@ -85,34 +87,18 @@ class PixelAdventure extends FlameGame
     }
   }
 
-  void loadNextLevel() {
-    removeWhere((component) => component is Level);
-
-    if (currentLevelIndex < levelNames.length - 1) {
-      currentLevelIndex++;
-      _loadLevel();
-    } else {
-      // no more levels
-      currentLevelIndex = 0;
-      _loadLevel();
-    }
-  }
-
-  void _loadLevel() {
-    Future.delayed(const Duration(seconds: 1), () {
-      Level world = Level(
-        player: player,
-        levelName: levelNames[currentLevelIndex],
-      );
-
+  void _addCamera() {
       cam = CameraComponent.withFixedResolution(
         world: world,
         width: 640,
         height: 360,
       );
       cam.viewfinder.anchor = Anchor.topLeft;
+      add(cam);
+    }
 
-      addAll([cam, world]);
-    });
+  void _addWorld() {
+    world.player = player;
+    add(world);
   }
 }
