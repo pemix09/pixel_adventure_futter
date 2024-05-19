@@ -13,6 +13,7 @@ class GameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return GameWidget<PixelAdventure>(
       game: PixelAdventure(
+        player: Player(character: 'Mask Dude'),
         world: Level(
           levelName: 'Level-01',
         ),

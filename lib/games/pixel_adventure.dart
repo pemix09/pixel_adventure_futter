@@ -17,7 +17,7 @@ class PixelAdventure extends FlameGame
   @override
   Color backgroundColor() => const Color(0xFF211F30);
   late CameraComponent cam;
-  Player player = Player(character: 'Mask Dude');
+  late final Player player;
   late JoystickComponent joystick;
   Level world;
   bool showControls = false;
@@ -25,7 +25,7 @@ class PixelAdventure extends FlameGame
   double soundVolume = 1.0;
   int currentLevelIndex = 0;
 
-  PixelAdventure({required this.world});
+  PixelAdventure({required this.world, required this.player});
 
   @override
   FutureOr<void> onLoad() async {
