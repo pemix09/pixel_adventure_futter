@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nes_ui/nes_ui.dart';
 
-class GamePauseDialog extends StatelessWidget {
-  void Function() onResume;
-
-  GamePauseDialog({super.key, required this.onResume});
+class Menu extends StatelessWidget {
+  const Menu({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,18 +23,10 @@ class GamePauseDialog extends StatelessWidget {
             const SizedBox(height: 16),
             NesButton(
               onPressed: () {
-                context.go('/menu');
+                context.go('/game');
               },
               type: NesButtonType.normal,
-              child: const Text('Level selection'),
-            ),
-            const SizedBox(height: 16),
-            NesButton(
-              onPressed: () {
-                onResume();
-              },
-              type: NesButtonType.normal,
-              child: const Text('Resume'),
+              child: const Text('play'),
             ),
           ],
         ),
