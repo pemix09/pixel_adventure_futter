@@ -3,7 +3,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:nes_ui/nes_ui.dart';
 import 'package:pixel_adventure/dialogs/game_pause_dialog.dart';
-import 'package:pixel_adventure/screens/pixel_adventure.dart';
+import 'package:pixel_adventure/games/pixel_adventure.dart';
 import 'package:pixel_adventure/router.dart';
 
 const String pauseButton = 'pause_button_key';

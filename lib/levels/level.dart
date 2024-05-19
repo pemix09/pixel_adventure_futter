@@ -8,7 +8,7 @@ import 'package:pixel_adventure/collectables/fruit.dart';
 import 'package:pixel_adventure/characters/player.dart';
 import 'package:pixel_adventure/obstacles/saw.dart';
 import 'package:pixel_adventure/main.dart';
-import 'package:pixel_adventure/screens/pixel_adventure.dart';
+import 'package:pixel_adventure/games/pixel_adventure.dart';
 import 'package:pixel_adventure/utils/collision_block.dart';
 
 class Level extends World with HasGameRef<PixelAdventure> {
