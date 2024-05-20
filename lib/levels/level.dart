@@ -13,7 +13,6 @@ import 'package:pixel_adventure/utils/collision_block.dart';
 
 class Level extends World with HasGameRef<PixelAdventure> {
   final String levelName;
-  Player? player;
 
   Level({required this.levelName});
 
@@ -59,11 +58,9 @@ class Level extends World with HasGameRef<PixelAdventure> {
       for (final spawnPoint in spawnPointsLayer.objects) {
         switch (spawnPoint.class_) {
           case 'Player':
-            if (player != null) {
-              player!.position = Vector2(spawnPoint.x, spawnPoint.y);
-              player!.scale.x = 1;
-              add(player!);
-            }
+            game.player.position = Vector2(spawnPoint.x, spawnPoint.y);
+            game.player.scale.x = 1;
+            add(game.player);
             break;
           case 'Fruit':
             final fruit = Fruit(
@@ -135,6 +132,7 @@ class Level extends World with HasGameRef<PixelAdventure> {
         }
       }
     }
-    player?.collisionBlocks = collisionBlocks;
+
+    game.player.collisionBlocks = collisionBlocks;
   }
 }

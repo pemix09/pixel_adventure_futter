@@ -31,7 +31,7 @@ class PixelAdventure extends FlameGame
   FutureOr<void> onLoad() async {
     // Load all images into cache
     await images.loadAllImages();
-    _addWorld();
+    add(world);
     _addCamera();
 
     if (showControls) {
@@ -96,9 +96,4 @@ class PixelAdventure extends FlameGame
       cam.viewfinder.anchor = Anchor.topLeft;
       add(cam);
     }
-
-  void _addWorld() {
-    world.player = player;
-    add(world);
-  }
 }
