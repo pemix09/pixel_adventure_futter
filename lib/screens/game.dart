@@ -7,7 +7,9 @@ import 'package:pixel_adventure/main.dart';
 import 'package:pixel_adventure/games/pixel_adventure.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({super.key});
+  final String level;
+
+  const GameScreen({super.key, required this.level});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +17,7 @@ class GameScreen extends StatelessWidget {
       game: PixelAdventure(
         player: Player(character: 'Mask Dude'),
         world: Level(
-          levelName: 'Level-01',
+          levelName: level,
         ),
       ),
       overlayBuilderMap: {
@@ -25,16 +27,12 @@ class GameScreen extends StatelessWidget {
             top: 10,
             child: IconButton(
               onPressed: () {
-                if (game.paused) {
-                  game.resumeEngine();
-                  game.overlays.remove(pauseDialog);
-                } else {
-                  game.pauseEngine();
-                  game.overlays.add(pauseDialog);
-                }
+                game.pauseEngine();
+                game.overlays.add(pauseDialog);
+                game.overlays.remove(pauseButton);
               },
-              icon: Icon(
-                game.paused ? Icons.play_arrow : Icons.pause,
+              icon: const Icon(
+                Icons.pause,
                 size: 80,
               ),
             ),
@@ -44,6 +42,7 @@ class GameScreen extends StatelessWidget {
           return GamePauseDialog(
             onResume: () {
               game.overlays.remove(pauseDialog);
+              game.overlays.add(pauseButton);
               game.resumeEngine();
             },
           );
