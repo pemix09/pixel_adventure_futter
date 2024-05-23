@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flame/game.dart';
@@ -20,7 +21,7 @@ class PixelAdventure extends FlameGame
   late final Player player;
   late JoystickComponent joystick;
   Level world;
-  bool showControls = false;
+  bool showControls = Platform.isIOS || Platform.isAndroid;
   bool playSounds = true;
   double soundVolume = 1.0;
   int currentLevelIndex = 0;
