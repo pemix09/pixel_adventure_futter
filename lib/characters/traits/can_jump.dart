@@ -5,7 +5,6 @@ import 'package:pixel_adventure/characters/playable_character.dart';
 mixin CanJump on PlayableCharacter {
 
   int queuedJumps = 0;
-  int madeJumps = 0;
 
   double get jumpForce => 260;
   int get maxJumps => 2;
@@ -33,6 +32,5 @@ mixin CanJump on PlayableCharacter {
 
   void resetJumps() {
     queuedJumps = 0;
-    madeJumps = 0;
   }
 }
