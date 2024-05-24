@@ -4,21 +4,20 @@ import 'package:pixel_adventure/characters/playable_character.dart';
 
 mixin CanJump on PlayableCharacter {
 
-  int queuedJumps = 0;
+  int _jumps = 0;
+  bool _jumpInNextFrame = false;
 
   double get jumpForce => 260;
   int get maxJumps => 2;
 
   void jump() {
-    if (queuedJumps < maxJumps) {
-      queuedJumps++;
+    if (_jumps < maxJumps) {
+      _jumpInNextFrame = true;
     }
   }
 
-  // tutaj to się wykonuje podczas renderowania kadej klatki, dlatego ustawia od razu na 2 madeJumps
   void checkShouldJump(double dt) {
-    if (queuedJumps <= 0)    {
-      debugPrint('queued: $queuedJumps');
+    if (!_jumpInNextFrame) {
       return;
     }
 
@@ -27,10 +26,11 @@ mixin CanJump on PlayableCharacter {
     }
     velocity.y = -jumpForce;
     position.y += velocity.y * dt;
-    queuedJumps--;
+    _jumps++;
+    _jumpInNextFrame = false;
   }
 
   void resetJumps() {
-    queuedJumps = 0;
+    _jumps = 0;
   }
 }
