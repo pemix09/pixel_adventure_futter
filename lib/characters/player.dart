@@ -6,11 +6,11 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:pixel_adventure/characters/playable_character.dart';
 import 'package:pixel_adventure/characters/traits/can_jump.dart';
+import 'package:pixel_adventure/characters/traits/can_move.dart';
 import 'package:pixel_adventure/collectables/checkpoint.dart';
 import 'package:pixel_adventure/characters/chicken.dart';
 import 'package:pixel_adventure/collectables/fruit.dart';
 import 'package:pixel_adventure/obstacles/saw.dart';
-import 'package:pixel_adventure/games/pixel_adventure.dart';
 import 'package:pixel_adventure/utils/collision_block.dart';
 import 'package:pixel_adventure/utils/custom_hitbox.dart';
 import 'package:pixel_adventure/utils/utils.dart';
@@ -25,7 +25,7 @@ enum PlayerState {
   disappearing
 }
 
-class Player extends PlayableCharacter with CanJump {
+class Player extends PlayableCharacter with CanJump, CanMove {
   String character;
   Player({
     position,
@@ -43,10 +43,7 @@ class Player extends PlayableCharacter with CanJump {
 
   final double _gravity = 9.8;
   final double _terminalVelocity = 300;
-  double horizontalMovement = 0;
-  double moveSpeed = 100;
   Vector2 startingPosition = Vector2.zero();
-  Vector2 velocity = Vector2.zero();
   bool isOnGround = false;
   bool gotHit = false;
   bool reachedCheckpoint = false;
@@ -81,7 +78,8 @@ class Player extends PlayableCharacter with CanJump {
     while (accumulatedTime >= fixedDeltaTime) {
       if (!gotHit && !reachedCheckpoint) {
         _updatePlayerState();
-        _updatePlayerMovement(fixedDeltaTime);
+        checkHorizontalMove(dt);
+        checkShouldJump(dt);
         _checkHorizontalCollisions();
         _applyGravity(fixedDeltaTime);
         _checkVerticalCollisions();
@@ -95,14 +93,19 @@ class Player extends PlayableCharacter with CanJump {
 
   @override
   bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
-    horizontalMovement = 0;
+    resetHorizontalMove();
     final isLeftKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyA) ||
         keysPressed.contains(LogicalKeyboardKey.arrowLeft);
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
         keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
-    horizontalMovement += isLeftKeyPressed ? -1 : 0;
-    horizontalMovement += isRightKeyPressed ? 1 : 0;
+    if (isLeftKeyPressed && isRightKeyPressed) {
+      resetHorizontalMove();
+    } else if (isLeftKeyPressed) {
+      moveLeft();
+    } else if (isRightKeyPressed) {
+      moveRight();
+    }
 
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       jump();
@@ -189,12 +192,6 @@ class Player extends PlayableCharacter with CanJump {
     if (velocity.y < 0) playerState = PlayerState.jumping;
 
     current = playerState;
-  }
-
-  void _updatePlayerMovement(double dt) {
-    checkShouldJump(dt);
-    velocity.x = horizontalMovement * moveSpeed;
-    position.x += velocity.x * dt;
   }
 
   void _checkHorizontalCollisions() {

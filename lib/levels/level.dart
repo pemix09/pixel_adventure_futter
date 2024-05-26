@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flame/components.dart';
 import 'package:flame_tiled/flame_tiled.dart';
-import 'package:pixel_adventure/backgrounds/background_tile.dart';
+import 'package:pixel_adventure/levels/background/background_tile.dart';
 import 'package:pixel_adventure/collectables/checkpoint.dart';
 import 'package:pixel_adventure/characters/chicken.dart';
 import 'package:pixel_adventure/collectables/fruit.dart';

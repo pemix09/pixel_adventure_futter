@@ -1,5 +1,4 @@
 import 'package:flame_audio/flame_audio.dart';
-import 'package:flutter/material.dart';
 import 'package:pixel_adventure/characters/playable_character.dart';
 
 mixin CanJump on PlayableCharacter {
