@@ -42,10 +42,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   late final SpriteAnimation appearingAnimation;
   late final SpriteAnimation disappearingAnimation;
 
-  final double _gravity = 9.8;
-  final double _terminalVelocity = 300;
   Vector2 startingPosition = Vector2.zero();
-  bool isOnGround = false;
   bool gotHit = false;
   bool reachedCheckpoint = false;
   List<CollisionBlock> collisionBlocks = [];
@@ -82,7 +79,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
         checkHorizontalMove(dt);
         checkShouldJump(dt);
         _checkHorizontalCollisions();
-        _applyGravity(fixedDeltaTime);
+        applyGravity(fixedDeltaTime);
         _checkVerticalCollisions();
       }
 
@@ -214,12 +211,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
     }
   }
 
-  void _applyGravity(double dt) {
-    velocity.y += _gravity;
-    velocity.y = velocity.y.clamp(-jumpForce, _terminalVelocity);
-    position.y += velocity.y * dt;
-  }
-
   void _checkVerticalCollisions() {
     for (final block in collisionBlocks) {
       if (block.isPlatform) {
@@ -227,7 +218,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
           resetJumps();
           if (isFalling) {
             setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
-            isOnGround = true;
             break;
           }
         }
@@ -236,7 +226,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
           if (isFalling) {
             resetJumps();
             setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
-            isOnGround = true;
             break;
           }
           if (isJumping) {
