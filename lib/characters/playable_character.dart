@@ -6,7 +6,5 @@ import 'package:pixel_adventure/games/pixel_adventure.dart';
 class PlayableCharacter extends Character with KeyboardHandler {
   
   PlayableCharacter({super.position});
-
-  Vector2 velocity = Vector2.zero();
-
+  
 }

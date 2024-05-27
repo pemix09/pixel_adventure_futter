@@ -6,7 +6,8 @@ import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/services.dart';
 import 'package:pixel_adventure/characters/playable_character.dart';
 import 'package:pixel_adventure/characters/traits/can_jump.dart';
-import 'package:pixel_adventure/characters/traits/can_move.dart';
+import 'package:pixel_adventure/characters/traits/can_move_vertically.dart';
+import 'package:pixel_adventure/characters/traits/can_move_horizontally.dart';
 import 'package:pixel_adventure/collectables/checkpoint.dart';
 import 'package:pixel_adventure/characters/chicken.dart';
 import 'package:pixel_adventure/collectables/fruit.dart';
@@ -25,7 +26,7 @@ enum PlayerState {
   disappearing
 }
 
-class Player extends PlayableCharacter with CanJump, CanMove {
+class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMoveVertically {
   String character;
   Player({
     position,
@@ -224,25 +225,22 @@ class Player extends PlayableCharacter with CanJump, CanMove {
       if (block.isPlatform) {
         if (checkCollision(this, block)) {
           resetJumps();
-          if (velocity.y > 0) {
-            velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY;
+          if (isFalling) {
+            setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
             isOnGround = true;
             break;
           }
         }
       } else {
         if (checkCollision(this, block)) {
-          resetJumps();
-          if (velocity.y > 0) {
-            velocity.y = 0;
-            position.y = block.y - hitbox.height - hitbox.offsetY;
+          if (isFalling) {
+            resetJumps();
+            setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
             isOnGround = true;
             break;
           }
-          if (velocity.y < 0) {
-            velocity.y = 0;
-            position.y = block.y + block.height - hitbox.offsetY;
+          if (isJumping) {
+            setPositionBelow(block.y, block.height, hitbox.offsetY);
           }
         }
       }
@@ -265,7 +263,7 @@ class Player extends PlayableCharacter with CanJump, CanMove {
     await animationTicker?.completed;
     animationTicker?.reset();
 
-    velocity = Vector2.zero();
+    resetVelocity();
     position = startingPosition;
     _updatePlayerState();
     Future.delayed(canMoveDuration, () => gotHit = false);
