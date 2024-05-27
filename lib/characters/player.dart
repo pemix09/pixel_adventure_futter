@@ -194,14 +194,11 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
     for (final block in collisionBlocks) {
       if (!block.isPlatform) {
         if (checkCollision(this, block)) {
-          if (velocity.x > 0) {
-            velocity.x = 0;
-            position.x = block.x - hitbox.offsetX - hitbox.width;
+          if (isGoingRight) {
+            setPositionOnTheLeft(block.x, hitbox.offsetX, hitbox.width);
             break;
-          }
-          if (velocity.x < 0) {
-            velocity.x = 0;
-            position.x = block.x + block.width + hitbox.width + hitbox.offsetX;
+          } else if (isGoingLeft) {
+            setPositionOnTheRight(block.x, block.width, hitbox.width, hitbox.offsetX);
             break;
           }
         }
