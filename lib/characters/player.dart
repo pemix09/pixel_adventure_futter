@@ -174,20 +174,18 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   void _updatePlayerState() {
     PlayerState playerState = PlayerState.idle;
 
-    if (velocity.x < 0 && scale.x > 0) {
-      flipHorizontallyAroundCenter();
-    } else if (velocity.x > 0 && scale.x < 0) {
+    if ((velocity.x < 0 && scale.x > 0) || (velocity.x > 0 && scale.x < 0)) {
       flipHorizontallyAroundCenter();
     }
 
     // Check if moving, set running
-    if (velocity.x > 0 || velocity.x < 0) playerState = PlayerState.running;
+    if (isRunning) playerState = PlayerState.running;
 
     // check if Falling set to falling
-    if (velocity.y > 0) playerState = PlayerState.falling;
+    if (isFalling) playerState = PlayerState.falling;
 
     // Checks if jumping, set to jumping
-    if (velocity.y < 0) playerState = PlayerState.jumping;
+    if (isJumping) playerState = PlayerState.jumping;
 
     current = playerState;
   }

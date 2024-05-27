@@ -26,15 +26,13 @@ mixin CanMoveHorizontally on Character {
     position.x += _horizontalMove * dt;
   }
 
-  // void setPositionOnTheRight() {
-  //   // TODO - nie wiem czy to napewno tak czy nie na odwrót xd
-  //   resetHorizontalMove();
-  //   position.x = block.x - hitbox.offsetX - hitbox.width;
-  // }
-  //
-  // void setPositionOnTheLeft() {
-  //   // TODO - nie wiem czy to napewno tak czy nie na odwrót xd
-  //   resetHorizontalMove();
-  //   position.x = block.x + block.width + hitbox.width + hitbox.offsetX;
-  // }
+  void setPositionOnTheRight(double blockX, double hitBoxOffsetX, double hitBoxWidth) {
+    resetHorizontalMove();
+    position.x = blockX - hitBoxOffsetX - hitBoxWidth;
+  }
+
+  void setPositionOnTheLeft(double blockX, double blockWidth, double hitBoxOffsetX, double hitBoxWidth) {
+    resetHorizontalMove();
+    position.x = blockX + blockWidth + hitBoxWidth + hitBoxOffsetX;
+  }
 }
