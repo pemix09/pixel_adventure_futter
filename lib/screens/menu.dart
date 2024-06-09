@@ -32,6 +32,11 @@ class Menu extends StatelessWidget {
               onPressed: () => context.go('/level-02'),
               type: NesButtonType.normal,
               child: const Text('Level02'),
+            ),
+            NesButton(
+              onPressed: () => context.go('/level-03'),
+              type: NesButtonType.normal,
+              child: const Text('Level03'),
             )
           ],
         ),

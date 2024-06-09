@@ -33,6 +33,8 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
     this.character = 'Ninja Frog',
   }) : super(position: position);
 
+  factory Player.byName(String playerName) => Player(character: playerName);
+
   final double stepTime = 0.05;
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;

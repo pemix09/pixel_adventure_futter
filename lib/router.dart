@@ -10,12 +10,8 @@ final router = GoRouter(
       builder: (context, state) => const Menu(),
     ),
     GoRoute(
-      path: '/level-01',
-      builder: (context, state) => const GameScreen(level: 'Level-01',)
+      path: '/level-:levelNumber',
+      builder: (context, state) => GameScreen(level: 'Level-${state.pathParameters['levelNumber']}',)
     ),
-    GoRoute(
-      path: '/level-02',
-        builder: (context, state) => const GameScreen(level: 'Level-02',)
-    )
   ],
 );
