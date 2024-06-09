@@ -18,7 +18,7 @@ class PixelAdventure extends FlameGame
   @override
   Color backgroundColor() => const Color(0xFF211F30);
   late CameraComponent cam;
-  late final Player player;
+  final Player player;
   late JoystickComponent joystick;
   Level world;
   bool showControls = Platform.isIOS || Platform.isAndroid;
@@ -94,7 +94,7 @@ class PixelAdventure extends FlameGame
         width: 640,
         height: 360,
       );
-      cam.viewfinder.anchor = Anchor.topLeft;
       add(cam);
+      cam.follow(player);
     }
 }
