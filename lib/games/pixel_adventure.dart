@@ -71,6 +71,7 @@ class PixelAdventure extends FlameGame
     if (joystick != null && children.contains(joystick)) {
       joystick!.onDragEnd(event);
       remove(joystick!);
+      joystick = null;
     }
     super.onDragEnd(event);
   }
@@ -80,6 +81,7 @@ class PixelAdventure extends FlameGame
     if (joystick != null && children.contains(joystick)) {
       joystick!.onDragCancel(event);
       remove(joystick!);
+      joystick = null;
     }
     super.onDragCancel(event);
   }
