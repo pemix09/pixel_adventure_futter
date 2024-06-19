@@ -5,6 +5,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pixel_adventure/buttons/jump_button.dart';
 import 'package:pixel_adventure/characters/player.dart';
 import 'package:pixel_adventure/levels/level.dart';
@@ -19,7 +20,7 @@ class PixelAdventure extends FlameGame
   Color backgroundColor() => const Color(0xFF211F30);
   late CameraComponent cam;
   final Player player;
-  late JoystickComponent joystick;
+  JoystickComponent? joystick;
   Level world;
   bool showControls = Platform.isIOS || Platform.isAndroid;
   bool playSounds = true;
@@ -36,7 +37,6 @@ class PixelAdventure extends FlameGame
     _addCamera();
 
     if (showControls) {
-      addJoystick();
       add(JumpButton());
     }
 
@@ -46,13 +46,48 @@ class PixelAdventure extends FlameGame
   @override
   void update(double dt) {
     if (showControls) {
-      updateJoystick();
+      _updateJoystick();
     }
     super.update(dt);
   }
 
-  void addJoystick() {
-    joystick = JoystickComponent(
+  @override
+  void onDragStart(DragStartEvent event) {
+    if (showControls && event.canvasPosition.x < canvasSize.x / 2 && !children.contains(joystick)) {
+      joystick = _buildJoystick(event.canvasPosition);
+      joystick!.onDragStart(event);
+      add(joystick!);
+    }
+    super.onDragStart(event);
+  }
+
+  @override
+  void onDragUpdate(DragUpdateEvent event) {
+    joystick?.onDragUpdate(event);
+  }
+
+  @override
+  void onDragEnd(DragEndEvent event) {
+    if (joystick != null && children.contains(joystick)) {
+      joystick!.onDragEnd(event);
+      remove(joystick!);
+    }
+    super.onDragEnd(event);
+  }
+
+  @override
+  void onDragCancel(DragCancelEvent event){
+    if (joystick != null && children.contains(joystick)) {
+      joystick!.onDragCancel(event);
+      remove(joystick!);
+    }
+    super.onDragCancel(event);
+  }
+
+
+  JoystickComponent _buildJoystick(Vector2 position) {
+    return JoystickComponent(
+      position: position,
       priority: 10,
       knob: SpriteComponent(
         sprite: Sprite(
@@ -64,14 +99,16 @@ class PixelAdventure extends FlameGame
           images.fromCache('HUD/Joystick.png'),
         ),
       ),
-      margin: const EdgeInsets.only(left: 32, bottom: 32),
     );
-
-    add(joystick);
   }
 
-  void updateJoystick() {
-    switch (joystick.direction) {
+  void _updateJoystick() {
+    if (joystick == null || !children.contains(joystick)) {
+      player.resetHorizontalMove();
+      return;
+    }
+
+    switch (joystick!.direction) {
       case JoystickDirection.left:
       case JoystickDirection.upLeft:
       case JoystickDirection.downLeft:
