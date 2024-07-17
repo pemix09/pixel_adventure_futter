@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:pixel_adventure/games/pixel_adventure.dart';
+import 'package:pixel_adventure/games/map_exploration.dart';
 
 class JumpButton extends SpriteComponent
-    with HasGameRef<PixelAdventure>, TapCallbacks {
+    with HasGameRef<MapExploration>, TapCallbacks {
   JumpButton();
 
   final margin = 32;

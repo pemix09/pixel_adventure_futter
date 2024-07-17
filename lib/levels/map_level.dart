@@ -26,6 +26,7 @@ class MapLevel extends Level {
     _scrollingBackground();
     _spawningObjects();
     _addCollisions();
+    _addCamera();
 
     return super.onLoad();
   }
@@ -125,5 +126,15 @@ class MapLevel extends Level {
         }
       }
     }
+  }
+
+  void _addCamera() {
+    cam = CameraComponent.withFixedResolution(
+      world: this,
+      width: 640,
+      height: 360,
+    );
+    game.add(cam);
+    cam.follow(game.player);
   }
 }

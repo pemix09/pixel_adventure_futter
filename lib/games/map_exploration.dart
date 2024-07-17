@@ -8,18 +8,13 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pixel_adventure/buttons/jump_button.dart';
 import 'package:pixel_adventure/characters/player.dart';
+import 'package:pixel_adventure/games/base_game.dart';
 import 'package:pixel_adventure/levels/map_level.dart';
 import 'package:pixel_adventure/main.dart';
 
-class PixelAdventure extends FlameGame
-    with
-        HasKeyboardHandlerComponents,
-        DragCallbacks,
-        HasCollisionDetection,
-        TapCallbacks {
+class MapExploration extends BaseGame with DragCallbacks {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
-  late CameraComponent cam;
   final Player player;
   JoystickComponent? joystick;
   MapLevel world;
@@ -28,14 +23,13 @@ class PixelAdventure extends FlameGame
   double soundVolume = 1.0;
   int currentLevelIndex = 0;
 
-  PixelAdventure({required this.world, required this.player});
+  MapExploration({required this.world, required this.player});
 
   @override
   FutureOr<void> onLoad() async {
     // Load all images into cache
     await images.loadAllImages();
     add(world);
-    _addCamera();
 
     if (showControls) {
       add(JumpButton());
@@ -132,14 +126,4 @@ class PixelAdventure extends FlameGame
         break;
     }
   }
-
-  void _addCamera() {
-      cam = CameraComponent.withFixedResolution(
-        world: world,
-        width: 640,
-        height: 360,
-      );
-      add(cam);
-      cam.follow(player);
-    }
 }

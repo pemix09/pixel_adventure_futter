@@ -4,7 +4,7 @@ import 'package:pixel_adventure/characters/player.dart';
 import 'package:pixel_adventure/dialogs/game_pause_dialog.dart';
 import 'package:pixel_adventure/levels/map_level.dart';
 import 'package:pixel_adventure/main.dart';
-import 'package:pixel_adventure/games/pixel_adventure.dart';
+import 'package:pixel_adventure/games/map_exploration.dart';
 
 class GameScreen extends StatelessWidget {
   final String level;
@@ -13,8 +13,8 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GameWidget<PixelAdventure>(
-      game: PixelAdventure(
+    return GameWidget<MapExploration>(
+      game: MapExploration(
         player: Player(character: 'Mask Dude'),
         world: MapLevel(
           levelName: level,
