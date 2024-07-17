@@ -16,6 +16,10 @@ class Level extends World with HasGameRef<PixelAdventure> {
   Level({required this.levelName});
 
   late TiledComponent level;
+
+  // collision blocks below has to be checked for collision every frame, not by
+  // using collision detection, as they are crucial for setting right player position
+  // thus collision detection from flame game engine cannot be used
   List<CollisionBlock> collisionBlocks = [];
 
   @override
