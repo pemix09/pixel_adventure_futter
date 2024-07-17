@@ -47,7 +47,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   Vector2 startingPosition = Vector2.zero();
   bool gotHit = false;
   bool reachedCheckpoint = false;
-  List<CollisionBlock> collisionBlocks = [];
   CustomHitbox hitbox = CustomHitbox(
     offsetX: 10,
     offsetY: 4,
@@ -193,7 +192,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   }
 
   void _checkHorizontalCollisions() {
-    for (final block in collisionBlocks) {
+    for (final block in game.world.collisionBlocks) {
       if (!block.isPlatform) {
         if (checkCollision(this, block)) {
           if (isGoingRight) {
@@ -209,7 +208,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   }
 
   void _checkVerticalCollisions() {
-    for (final block in collisionBlocks) {
+    for (final block in game.world.collisionBlocks) {
       if (block.isPlatform) {
         if (checkCollision(this, block)) {
           resetJumps();

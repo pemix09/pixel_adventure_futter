@@ -8,7 +8,8 @@ import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pixel_adventure/buttons/jump_button.dart';
 import 'package:pixel_adventure/characters/player.dart';
-import 'package:pixel_adventure/levels/level.dart';
+import 'package:pixel_adventure/levels/map_level.dart';
+import 'package:pixel_adventure/main.dart';
 
 class PixelAdventure extends FlameGame
     with
@@ -21,7 +22,7 @@ class PixelAdventure extends FlameGame
   late CameraComponent cam;
   final Player player;
   JoystickComponent? joystick;
-  Level world;
+  MapLevel world;
   bool showControls = Platform.isIOS || Platform.isAndroid;
   bool playSounds = true;
   double soundVolume = 1.0;
@@ -86,6 +87,11 @@ class PixelAdventure extends FlameGame
     super.onDragCancel(event);
   }
 
+  @override
+  FutureOr<void> onMount() async {
+    super.onMount();
+    overlays.add(pauseButton);
+  }
 
   JoystickComponent _buildJoystick(Vector2 position) {
     return JoystickComponent(
