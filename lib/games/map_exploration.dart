@@ -7,23 +7,18 @@ import 'package:flame/input.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pixel_adventure/buttons/jump_button.dart';
-import 'package:pixel_adventure/characters/player.dart';
-import 'package:pixel_adventure/games/base_game.dart';
+import 'package:pixel_adventure/games/pixel_game.dart';
 import 'package:pixel_adventure/levels/map_level.dart';
 import 'package:pixel_adventure/main.dart';
 
-class MapExploration extends BaseGame with DragCallbacks {
+class MapExploration extends PixelGame with DragCallbacks {
   @override
   Color backgroundColor() => const Color(0xFF211F30);
-  final Player player;
   JoystickComponent? joystick;
-  MapLevel world;
   bool showControls = Platform.isIOS || Platform.isAndroid;
-  bool playSounds = true;
-  double soundVolume = 1.0;
   int currentLevelIndex = 0;
 
-  MapExploration({required this.world, required this.player});
+  MapExploration({required super.world, required super.player});
 
   @override
   FutureOr<void> onLoad() async {
