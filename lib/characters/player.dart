@@ -26,8 +26,10 @@ enum PlayerState {
   disappearing
 }
 
-class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMoveVertically {
+class Player extends PlayableCharacter
+    with CanJump, CanMoveHorizontally, CanMoveVertically {
   String character;
+
   Player({
     position,
     this.character = 'Ninja Frog',
@@ -59,7 +61,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
-    // debugMode = true;
+    debugMode = true;
 
     startingPosition = Vector2(position.x, position.y);
 
@@ -72,16 +74,16 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
 
   @override
   void update(double dt) {
+    // todo check whether it's necessary to use accumulatedTIme and fixedDeltaTime
     accumulatedTime += dt;
 
     while (accumulatedTime >= fixedDeltaTime) {
       if (!gotHit && !reachedCheckpoint) {
         _updatePlayerState();
-        checkHorizontalMove(dt);
+        updateHorizontalPosition(dt);
         checkShouldJump(dt);
-        _checkHorizontalCollisions();
         applyGravity(fixedDeltaTime);
-        _checkVerticalCollisions();
+        updateVerticalPosition(dt);
       }
 
       accumulatedTime -= fixedDeltaTime;
@@ -108,6 +110,7 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
 
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       jump();
+      isBlockedOnBottom = false;
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -116,6 +119,34 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
+    if (other is CollisionBlock) {
+      double playerRealX = isFlippedHorizontally ? x - width : x;
+      if ((isFalling || isIdle) && collidableFromBottom == null &&
+          !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
+        print('Hit from the bottom, other y: ${other.y}, y: $y');
+        resetJumps();
+        resetVerticalMovement();
+        collidableFromBottom = other;
+        isBlockedOnBottom = true;
+      } else if (isJumping && collidableFromTop == null &&
+          !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
+        print('Hit from the top, other y: ${other.y}, y: $y');
+        resetVerticalMovement();
+        collidableFromTop = other;
+        isBlockedOnTop = true;
+      } else if (isGoingRight && collidableFromRight == null &&
+          !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
+        print('Hit from the right, other x: ${other.x}, x: $x, width: $width');
+        collidableFromRight = other;
+        isBlockedOnRight = true;
+      } else if (isGoingLeft && collidableFromLeft == null &&
+          !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
+        print('Hit from the left, other x: ${other.x}, x: $x');
+        collidableFromLeft = other;
+        isBlockedOnLeft = true;
+      }
+    }
+
     if (!reachedCheckpoint) {
       if (other is Fruit) other.collidedWithPlayer();
       if (other is Saw) _respawn();
@@ -123,6 +154,26 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
       if (other is Checkpoint) _reachedCheckpoint();
     }
     super.onCollisionStart(intersectionPoints, other);
+  }
+
+  @override
+  void onCollisionEnd(PositionComponent other) {
+    if (other is CollisionBlock) {
+      if (identical(other, collidableFromBottom)) {
+        collidableFromBottom = null;
+        isBlockedOnBottom = false;
+      } else if (identical(other, collidableFromTop)) {
+        collidableFromTop = null;
+        isBlockedOnTop = false;
+      } else if (identical(other, collidableFromLeft)) {
+        collidableFromLeft = null;
+        isBlockedOnLeft = false;
+      } else if (identical(other, collidableFromRight)) {
+        collidableFromRight = null;
+        isBlockedOnRight = false;
+      }
+    }
+    super.onCollisionEnd(other);
   }
 
   void _loadAllAnimations() {
@@ -191,47 +242,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
     current = playerState;
   }
 
-  void _checkHorizontalCollisions() {
-    for (final block in game.world.collisionBlocks) {
-      if (!block.isPlatform) {
-        if (checkCollision(this, block)) {
-          if (isGoingRight) {
-            setPositionOnTheLeft(block.x, hitbox.offsetX, hitbox.width);
-            break;
-          } else if (isGoingLeft) {
-            setPositionOnTheRight(block.x, block.width, hitbox.width, hitbox.offsetX);
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  void _checkVerticalCollisions() {
-    for (final block in game.world.collisionBlocks) {
-      if (block.isPlatform) {
-        if (checkCollision(this, block)) {
-          resetJumps();
-          if (isFalling) {
-            setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
-            break;
-          }
-        }
-      } else {
-        if (checkCollision(this, block)) {
-          if (isFalling) {
-            resetJumps();
-            setPositionAbove(block.y, hitbox.height, hitbox.offsetY);
-            break;
-          }
-          if (isJumping) {
-            setPositionBelow(block.y, block.height, hitbox.offsetY);
-          }
-        }
-      }
-    }
-  }
-
   void _respawn() async {
     if (game.playSounds) FlameAudio.play('hit.wav', volume: game.soundVolume);
     const canMoveDuration = Duration(milliseconds: 400);
@@ -272,7 +282,6 @@ class Player extends PlayableCharacter with CanJump, CanMoveHorizontally, CanMov
 
     reachedCheckpoint = false;
     position = Vector2.all(-640);
-
   }
 
   void collidedwithEnemy() {

@@ -113,7 +113,6 @@ class MapLevel extends Level {
               size: Vector2(collision.width, collision.height),
               isPlatform: true,
             );
-            collisionBlocks.add(platform);
             add(platform);
             break;
           default:
@@ -121,7 +120,6 @@ class MapLevel extends Level {
               position: Vector2(collision.x, collision.y),
               size: Vector2(collision.width, collision.height),
             );
-            collisionBlocks.add(block);
             add(block);
         }
       }

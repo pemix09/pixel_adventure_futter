@@ -1,11 +1,23 @@
 import 'package:pixel_adventure/characters/playable_character.dart';
+import 'package:pixel_adventure/utils/collision_block.dart';
 
 mixin CanMoveVertically on PlayableCharacter {
 
   final double _gravity = 9.8;
   final double _terminalVelocity = 300;
-  bool _isOnGround = false;
+  bool _isBlockedOnBottom = false;
+  bool _isBlockedOnTop = false;
+  CollisionBlock? _collidableFromBottom = null;
+  CollisionBlock? _collidableFromTop = null;
 
+  set collidableFromBottom(CollisionBlock? newCollidableFromBottom) => _collidableFromBottom = newCollidableFromBottom;
+  CollisionBlock? get collidableFromBottom => _collidableFromBottom;
+  set collidableFromTop(CollisionBlock? newCollidableFromTop) => _collidableFromTop = newCollidableFromTop;
+  CollisionBlock? get collidableFromTop => _collidableFromTop;
+  set isBlockedOnBottom(bool newIsBlockedOnBottom) => _isBlockedOnBottom = newIsBlockedOnBottom;
+  bool get isBlockedOnBottom => _isBlockedOnBottom;
+  set isBlockedOnTop(bool newIsBlockedOnTop) => _isBlockedOnTop = newIsBlockedOnTop;
+  bool get isBlockedOnTop => _isBlockedOnTop;
   set _verticalSpeed(double newVerticalSpeed) => velocity.y = newVerticalSpeed;
   double get _verticalSpeed => velocity.y;
   bool get isFalling => velocity.y > 0;
@@ -21,19 +33,15 @@ mixin CanMoveVertically on PlayableCharacter {
   }
 
   void applyGravity(double dt) {
-    _verticalSpeed += _gravity;
-    _verticalSpeed = _verticalSpeed.clamp(-_terminalVelocity, _terminalVelocity);
-    position.y += _verticalSpeed * dt;
+    if (!isBlockedOnBottom) {
+      _verticalSpeed += _gravity;
+      _verticalSpeed = _verticalSpeed.clamp(-_terminalVelocity, _terminalVelocity);
+    }
   }
 
-  void setPositionBelow(double blockY, double blockHeight, double hitBoxOffsetY) {
-    velocity.y = 0;
-    position.y = blockY + blockHeight - hitBoxOffsetY;
-  }
-
-  void setPositionAbove(double blockY, double hitBoxHeight, double hitBoxOffsetY) {
-    velocity.y = 0;
-    position.y = blockY - hitBoxHeight - hitBoxOffsetY;
-    _isOnGround = true;
+  void updateVerticalPosition(double dt) {
+    if (_verticalSpeed < 0 && !isBlockedOnTop || _verticalSpeed > 0 && !isBlockedOnBottom) {
+      position.y += _verticalSpeed * dt;
+    }
   }
 }
