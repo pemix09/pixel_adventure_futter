@@ -58,6 +58,8 @@ class Player extends PlayableCharacter
   double fixedDeltaTime = 1 / 60;
   double accumulatedTime = 0;
 
+  double get playerRealX => isFlippedHorizontally ? x - width : x;
+
   @override
   FutureOr<void> onLoad() {
     _loadAllAnimations();
@@ -110,7 +112,6 @@ class Player extends PlayableCharacter
 
     if (keysPressed.contains(LogicalKeyboardKey.space)) {
       jump();
-      isBlockedOnBottom = false;
     }
 
     return super.onKeyEvent(event, keysPressed);
@@ -120,30 +121,21 @@ class Player extends PlayableCharacter
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
     if (other is CollisionBlock) {
-      double playerRealX = isFlippedHorizontally ? x - width : x;
       if ((isFalling || isIdle) && collidableFromBottom == null &&
           !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
-        print('Hit from the bottom, other y: ${other.y}, y: $y');
         resetJumps();
         resetVerticalMovement();
         collidableFromBottom = other;
-        isBlockedOnBottom = true;
       } else if (isJumping && collidableFromTop == null &&
           !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
-        print('Hit from the top, other y: ${other.y}, y: $y');
         resetVerticalMovement();
         collidableFromTop = other;
-        isBlockedOnTop = true;
       } else if (isGoingRight && collidableFromRight == null &&
           !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
-        print('Hit from the right, other x: ${other.x}, x: $x, width: $width');
         collidableFromRight = other;
-        isBlockedOnRight = true;
       } else if (isGoingLeft && collidableFromLeft == null &&
           !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
-        print('Hit from the left, other x: ${other.x}, x: $x');
         collidableFromLeft = other;
-        isBlockedOnLeft = true;
       }
     }
 
@@ -161,16 +153,12 @@ class Player extends PlayableCharacter
     if (other is CollisionBlock) {
       if (identical(other, collidableFromBottom)) {
         collidableFromBottom = null;
-        isBlockedOnBottom = false;
       } else if (identical(other, collidableFromTop)) {
         collidableFromTop = null;
-        isBlockedOnTop = false;
       } else if (identical(other, collidableFromLeft)) {
         collidableFromLeft = null;
-        isBlockedOnLeft = false;
       } else if (identical(other, collidableFromRight)) {
         collidableFromRight = null;
-        isBlockedOnRight = false;
       }
     }
     super.onCollisionEnd(other);
