@@ -3,19 +3,15 @@ import 'package:pixel_adventure/utils/collision_block.dart';
 
 mixin CanMoveHorizontally on Character {
   double moveSpeed = 100;
-  bool _isBlockedOnRight = false;
-  bool _isBlockedOnLeft = false;
-  CollisionBlock? _collidableFromLeft = null;
-  CollisionBlock? _collidableFromRight = null;
+  CollisionBlock? _collidableFromLeft;
+  CollisionBlock? _collidableFromRight;
 
   CollisionBlock? get collidableFromLeft => _collidableFromLeft;
   set collidableFromLeft(CollisionBlock? newCollidableFromLeft) => _collidableFromLeft = newCollidableFromLeft;
   CollisionBlock? get collidableFromRight => _collidableFromRight;
   set collidableFromRight(CollisionBlock? newCollidableFromRight) => _collidableFromRight = newCollidableFromRight;
-  bool get isBlockedOnRight => _isBlockedOnRight;
-  set isBlockedOnRight(bool newIsBlockedOnRight) => _isBlockedOnRight = newIsBlockedOnRight;
-  bool get isBlockedOnLeft => _isBlockedOnLeft;
-  set isBlockedOnLeft(bool newIsBlockedOnLeft) => _isBlockedOnLeft = newIsBlockedOnLeft;
+  bool get isBlockedOnRight => _collidableFromRight != null;
+  bool get isBlockedOnLeft => _collidableFromRight != null;
   double get _horizontalMove => velocity.x;
   set horizontalMove(double newHorizontalSpeed) => velocity.x = newHorizontalSpeed;
   bool get isRunning => _horizontalMove != 0;

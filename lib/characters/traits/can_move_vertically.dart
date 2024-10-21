@@ -5,8 +5,6 @@ mixin CanMoveVertically on PlayableCharacter {
 
   final double _gravity = 9.8;
   final double _terminalVelocity = 300;
-  bool _isBlockedOnBottom = false;
-  bool _isBlockedOnTop = false;
   CollisionBlock? _collidableFromBottom = null;
   CollisionBlock? _collidableFromTop = null;
 
@@ -14,10 +12,8 @@ mixin CanMoveVertically on PlayableCharacter {
   CollisionBlock? get collidableFromBottom => _collidableFromBottom;
   set collidableFromTop(CollisionBlock? newCollidableFromTop) => _collidableFromTop = newCollidableFromTop;
   CollisionBlock? get collidableFromTop => _collidableFromTop;
-  set isBlockedOnBottom(bool newIsBlockedOnBottom) => _isBlockedOnBottom = newIsBlockedOnBottom;
-  bool get isBlockedOnBottom => _isBlockedOnBottom;
-  set isBlockedOnTop(bool newIsBlockedOnTop) => _isBlockedOnTop = newIsBlockedOnTop;
-  bool get isBlockedOnTop => _isBlockedOnTop;
+  bool get isBlockedOnBottom => _collidableFromBottom != null;
+  bool get isBlockedOnTop => _collidableFromTop != null;
   set _verticalSpeed(double newVerticalSpeed) => velocity.y = newVerticalSpeed;
   double get _verticalSpeed => velocity.y;
   bool get isFalling => velocity.y > 0;
