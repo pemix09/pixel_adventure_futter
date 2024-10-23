@@ -11,7 +11,7 @@ mixin CanMoveHorizontally on Character {
   CollisionBlock? get collidableFromRight => _collidableFromRight;
   set collidableFromRight(CollisionBlock? newCollidableFromRight) => _collidableFromRight = newCollidableFromRight;
   bool get isBlockedOnRight => _collidableFromRight != null;
-  bool get isBlockedOnLeft => _collidableFromRight != null;
+  bool get isBlockedOnLeft => _collidableFromLeft != null;
   double get _horizontalMove => velocity.x;
   set horizontalMove(double newHorizontalSpeed) => velocity.x = newHorizontalSpeed;
   bool get isRunning => _horizontalMove != 0;
@@ -19,11 +19,15 @@ mixin CanMoveHorizontally on Character {
   bool get isGoingLeft => _horizontalMove < 0;
 
   void moveRight() {
-    horizontalMove = moveSpeed;
+    if (!isBlockedOnRight) {
+      horizontalMove = moveSpeed;
+    }
   }
 
   void moveLeft() {
-    horizontalMove = -moveSpeed;
+    if (!isBlockedOnLeft) {
+      horizontalMove = -moveSpeed;
+    }
   }
 
   void resetHorizontalMove() {

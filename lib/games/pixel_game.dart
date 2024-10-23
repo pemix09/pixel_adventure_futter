@@ -1,12 +1,13 @@
 import 'package:flame/game.dart';
 import 'package:flame/input.dart';
 import 'package:pixel_adventure/characters/player.dart';
+import 'package:pixel_adventure/levels/level.dart';
 import 'package:pixel_adventure/levels/map_level.dart';
 
 class PixelGame extends FlameGame with HasKeyboardHandlerComponents {
 
   final Player player;
-  MapLevel world;
+  Level world;
   bool playSounds = true;
   double soundVolume = 1.0;
 

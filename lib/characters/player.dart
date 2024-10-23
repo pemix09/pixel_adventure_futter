@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:pixel_adventure/characters/playable_character.dart';
 import 'package:pixel_adventure/characters/traits/can_jump.dart';
 import 'package:pixel_adventure/characters/traits/can_move_vertically.dart';
@@ -26,6 +28,13 @@ enum PlayerState {
   disappearing
 }
 
+enum CollisionDirection {
+  fromTop,
+  fromBottom,
+  fromRight,
+  fromLeft
+}
+
 class Player extends PlayableCharacter
     with CanJump, CanMoveHorizontally, CanMoveVertically {
   String character;
@@ -46,6 +55,8 @@ class Player extends PlayableCharacter
   late final SpriteAnimation appearingAnimation;
   late final SpriteAnimation disappearingAnimation;
 
+  late double horizontalMargin;
+  late double verticalMargin;
   Vector2 startingPosition = Vector2.zero();
   bool gotHit = false;
   bool reachedCheckpoint = false;
@@ -71,6 +82,9 @@ class Player extends PlayableCharacter
       position: Vector2(hitbox.offsetX, hitbox.offsetY),
       size: Vector2(hitbox.width, hitbox.height),
     ));
+
+    horizontalMargin = width / 2;
+    verticalMargin = height / 2;
     return super.onLoad();
   }
 
@@ -120,21 +134,28 @@ class Player extends PlayableCharacter
   @override
   void onCollisionStart(
       Set<Vector2> intersectionPoints, PositionComponent other) {
+    //etectCollisionDirection(other);
+    // here should be other collision setting logic, as the direction should be
+    // calculated from angle between poitns, and new collidable should be set,
+    // no matter if there is another collidable already set! And also - isGoingLeft etc.
+    // is not the best way to check from which direction is set
+
+    // here should be logic not to set the same object for floor and right
+    //or left collidable
+    detectCollisionDirection(other, intersectionPoints.first);
     if (other is CollisionBlock) {
-      if ((isFalling || isIdle) && collidableFromBottom == null &&
-          !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
+      if ((isFalling || isIdle)) {
         resetJumps();
         resetVerticalMovement();
         collidableFromBottom = other;
-      } else if (isJumping && collidableFromTop == null &&
-          !identical(other, collidableFromRight) && !identical(other, collidableFromLeft)) {
+      } else if (isJumping) {
         resetVerticalMovement();
         collidableFromTop = other;
-      } else if (isGoingRight && collidableFromRight == null &&
-          !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
+      }
+
+      if (isGoingRight) {
         collidableFromRight = other;
-      } else if (isGoingLeft && collidableFromLeft == null &&
-          !identical(other, collidableFromTop) && !identical(other, collidableFromBottom)) {
+      } else if (isGoingLeft) {
         collidableFromLeft = other;
       }
     }
@@ -148,17 +169,32 @@ class Player extends PlayableCharacter
     super.onCollisionStart(intersectionPoints, other);
   }
 
+
   @override
   void onCollisionEnd(PositionComponent other) {
+    debugPrint('Collision end with: ${other.runtimeType}');
+    debugPrint('loading: ${this.isLoading}, mounting: ${this.isMounting}');
+    // todo - check from which direction colision ended
+    // the same block can be set as 2 collidables - wrong!!!
+    // not tak bo on collision end podaje blok ktory jest ustawiony na bottom i left!!!
+   // kurde mam! wykrywanie kolizji - przeciez to bedzie wektor od centrum gracza do intersection point
+    //i mozna bedize obliczyc kat miedzy podłoga a
+    // albo jeszcze prosciej sprawdzac intersection point gdzie sie znajduje wzgledem centrum gracza
+    // i na tej podstawie okreslac skad kolizja
+    // inter x, y < center - od gory
+    // inter x < center a y > center - od lewej i jakos tak to bedzie
     if (other is CollisionBlock) {
-      if (identical(other, collidableFromBottom)) {
-        collidableFromBottom = null;
-      } else if (identical(other, collidableFromTop)) {
-        collidableFromTop = null;
-      } else if (identical(other, collidableFromLeft)) {
+      if (identical(other, collidableFromLeft)) {
         collidableFromLeft = null;
-      } else if (identical(other, collidableFromRight)) {
+      }
+      else if (identical(other, collidableFromRight)) {
         collidableFromRight = null;
+      }
+      else if (identical(other, collidableFromBottom)) {
+        collidableFromBottom = null;
+      }
+      else if (identical(other, collidableFromTop)) {
+        collidableFromTop = null;
       }
     }
     super.onCollisionEnd(other);
@@ -274,5 +310,24 @@ class Player extends PlayableCharacter
 
   void collidedwithEnemy() {
     _respawn();
+  }
+
+  CollisionDirection detectCollisionDirection(PositionComponent other, Vector2 point) {
+    var horizontalVector = Vector2(game.size.x, 0);
+    var collisionVector = Vector2(point.x - center.x, center.y - point.y);
+    var angle = horizontalVector.angleTo(collisionVector);
+    double realAngle = (angle * pi) - pi;
+    debugPrint('Angle: $angle pi radians, degreses: $realAngle');
+//    debugPrint('Player x: $x, y: $y, x+width: ${x+width}, y+height: ${y+height} point x: ${point.x}, point y: ${point.y}');
+
+    if (angle >= -75 && angle <= 75) {
+      debugPrint('Right col');
+    } else if (angle <= 225 && angle >= 75) {
+      debugPrint('TOp col');
+    } else if (angle >= 225 && angle <= 300) {
+      debugPrint(';eft col');
+    }
+
+    return CollisionDirection.fromBottom;
   }
 }

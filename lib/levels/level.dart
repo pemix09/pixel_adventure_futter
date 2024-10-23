@@ -8,4 +8,5 @@ import 'package:pixel_adventure/utils/collision_block.dart';
 
 abstract class Level extends World with HasGameRef<PixelGame>, HasCollisionDetection {
   late CameraComponent cam;
+
 }
