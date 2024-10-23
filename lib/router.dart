@@ -13,5 +13,9 @@ final router = GoRouter(
       path: '/level-:levelNumber',
       builder: (context, state) => GameScreen(level: 'Level-${state.pathParameters['levelNumber']}',)
     ),
+    GoRoute(
+      path: '/infinite-runner',
+      builder: (context, state) => GameScreen(level: 'Infinite-level')
+    )
   ],
 );
