@@ -12,4 +12,5 @@ abstract class Level extends World with HasGameRef<PixelGame>, HasCollisionDetec
   // thus collision detection from flame game engine cannot be used
   List<CollisionBlock> collisionBlocks = [];
   late CameraComponent cam;
+
 }
